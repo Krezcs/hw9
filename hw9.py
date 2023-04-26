@@ -15,14 +15,12 @@ def hello():
     return "How can I help you?"
 
 
-@input_error
 def add(contact):
     name, phone = contact.split()
     contacts[name] = phone
     return "Contact {} with phone number {} has been added.".format(name, phone)
 
 
-@input_error
 def change(contact):
     name, phone = contact.split()
     if name in contacts:
@@ -32,7 +30,6 @@ def change(contact):
         return "Contact {} does not exist.".format(name)
 
 
-@input_error
 def phone(name):
     if name in contacts:
         return "Phone number for contact {} is {}.".format(name, contacts[name])
