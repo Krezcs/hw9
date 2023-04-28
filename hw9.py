@@ -1,3 +1,5 @@
+import re
+
 def input_error(func):
     def wrapper(*args, **kwargs):
         try:
@@ -17,12 +19,20 @@ def hello():
 
 def add(contact):
     name, phone = contact.split()
+    if not re.match("^[A-Za-z ]+$", name):
+        return "Invalid input. Name can only contain English letters and spaces."
+    if not re.match("^\d+$", phone):
+        return "Invalid input. Phone number can only contain digits."
     contacts[name] = phone
     return "Contact {} with phone number {} has been added.".format(name, phone)
 
 
 def change(contact):
     name, phone = contact.split()
+    if not re.match("^[A-Za-z ]+$", name):
+        return "Invalid input. Name can only contain English letters and spaces."
+    if not re.match("^\d+$", phone):
+        return "Invalid input. Phone number can only contain digits."
     if name in contacts:
         contacts[name] = phone
         return "Phone number for contact {} has been updated to {}.".format(name, phone)
@@ -73,10 +83,13 @@ def main():
                 continue
             print(phone(command[1]))
         elif command[0] == "show":
-            if len(command) != 2 or command[1] != "all":
+            if len(command) != 2:
                 print("Invalid command. Please try again.")
                 continue
-            print(show_all())
+            if command[1] == "all":
+                print(show_all())
+            else:
+                print(phone(command[1]))
         elif command[0] in ["good", "bye", "close", "exit", "."]:
             print("Good bye!")
             break
@@ -84,6 +97,6 @@ def main():
             print("Invalid command. Please try again.")
 
 
+
 if __name__ == "__main__":
     main()
-
