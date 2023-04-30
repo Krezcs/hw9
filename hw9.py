@@ -1,58 +1,47 @@
 import re
 
-def input_error(func):
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except KeyError:
-            return "Contact name not found. Please provide a valid name."
-        except ValueError:
-            return "Invalid input. Please provide the correct input."
-        except IndexError:
-            return "Invalid input. Please provide valid input."
-    return wrapper
+def validation_contact(func):
+    def wrapp(*args, **kwargs):
+        name, phone = args[0], args[1]
+        if not re.match("^[A-Za-z ]+$", name):
+             return "Invalid input. Name can only contain English letters and spaces."
+        if not re.match("^\d+$", phone):
+            return "Invalid input. Phone number can only contain digits."
+        return func(*args, **kwargs)
+    return wrapp
 
-
-def hello():
-    return "How can I help you?"
-
-
-def add(contact):
-    name, phone = contact.split()
-    if not re.match("^[A-Za-z ]+$", name):
-        return "Invalid input. Name can only contain English letters and spaces."
-    if not re.match("^\d+$", phone):
-        return "Invalid input. Phone number can only contain digits."
+@validation_contact
+def add(name, phone):
     contacts[name] = phone
-    return "Contact {} with phone number {} has been added.".format(name, phone)
+    return f"Contact {name} with phone number {phone} has been added."
 
 
-def change(contact):
-    name, phone = contact.split()
-    if not re.match("^[A-Za-z ]+$", name):
-        return "Invalid input. Name can only contain English letters and spaces."
-    if not re.match("^\d+$", phone):
-        return "Invalid input. Phone number can only contain digits."
+@validation_contact
+def change(name, phone):
     if name in contacts:
         contacts[name] = phone
-        return "Phone number for contact {} has been updated to {}.".format(name, phone)
+        return f"Phone number for contact {name} has been updated to {phone}."
     else:
-        return "Contact {} does not exist.".format(name)
+        return f"Contact {name} does not exist."
 
 
 def phone(name):
     if name in contacts:
-        return "Phone number for contact {} is {}.".format(name, contacts[name])
+        return f"Phone number for contact {name} is {contacts[name]}."
     else:
-        return "Contact {} does not exist.".format(name)
+        return f"Contact {name} does not exist."
 
 
 def show_all():
     if not contacts:
         return "No contacts found."
     else:
-        contact_list = "\n".join(["{} - {}".format(name, phone) for name, phone in contacts.items()])
-        return "Contacts:\n{}".format(contact_list)
+        contact_list = "\n".join([f"{name} - {phone}" for name, phone in contacts.items()])
+        return f"Contacts:\n{contact_list}"
+
+
+def hello():
+    return "How can I help you?"
 
 
 def main():
@@ -69,14 +58,14 @@ def main():
             if len(command) != 3:
                 print("Invalid command. Please try again.")
                 continue
-            contact = "{} {}".format(command[1], command[2])
-            print(add(contact))
+            contact = command[1], command[2]
+            print(add(*contact))
         elif command[0] == "change":
             if len(command) != 3:
                 print("Invalid command. Please try again.")
                 continue
-            contact = "{} {}".format(command[1], command[2])
-            print(change(contact))
+            contact = command[1], command[2]
+            print(change(*contact))
         elif command[0] == "phone":
             if len(command) != 2:
                 print("Invalid command. Please try again.")
@@ -95,7 +84,6 @@ def main():
             break
         else:
             print("Invalid command. Please try again.")
-
 
 
 if __name__ == "__main__":
